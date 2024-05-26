@@ -5,3 +5,7 @@ server:
 spring:
   application:
     name: my-second-service
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
