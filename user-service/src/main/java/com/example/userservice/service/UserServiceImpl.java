@@ -3,6 +3,9 @@ package com.example.userservice.service;
 import com.example.userservice.dto.UserDTO;
 import com.example.userservice.repository.UserEntity;
 import com.example.userservice.repository.UserRepository;
+import com.example.userservice.vo.ResponseOrder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,8 +23,25 @@ public class UserServiceImpl implements UserService {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity user = modelMapper.map(userDto, UserEntity.class);
-        user.setEncryptedPwd("encryptedPwd");
+        user.setEncryptedPwd(UUID.randomUUID().toString());
         userRepository.save(user);
         return null;
+    }
+
+    @Override
+    public UserDTO getUserByUserId(String userId) {
+        UserEntity user = userRepository.findByUserId(userId);
+        if(user == null){
+            throw new RuntimeException("User not found");
+        }
+        UserDTO userDTO = new ModelMapper().map(user, UserDTO.class);
+        List<ResponseOrder> orders = new ArrayList<>();
+        userDTO.setOrders(orders);
+        return userDTO;
+    }
+
+    @Override
+    public Iterable<UserEntity> getUserByAll() {
+        return userRepository.findAll();
     }
 }
