@@ -8,5 +8,6 @@ public interface UserService extends UserDetailsService {
     UserDTO createUser(UserDTO userDto);
     UserDTO getUserByUserId(String userId);
     Iterable<UserEntity> getUserByAll();
+    UserDTO getUserDetailsByEmail(String email);
 
 }

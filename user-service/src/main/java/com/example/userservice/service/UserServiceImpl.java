@@ -13,6 +13,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,13 +21,14 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     public UserDTO createUser(UserDTO userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         UserEntity user = modelMapper.map(userDto, UserEntity.class);
-        user.setEncryptedPwd(UUID.randomUUID().toString());
+        user.setEncryptedPwd(bCryptPasswordEncoder.encode(userDto.getPassword()));
         userRepository.save(user);
         return null;
     }
@@ -46,6 +48,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Iterable<UserEntity> getUserByAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDTO getUserDetailsByEmail(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        return new ModelMapper().map(user, UserDTO.class);
     }
 
     @Override

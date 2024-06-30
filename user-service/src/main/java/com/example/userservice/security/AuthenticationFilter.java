@@ -5,6 +5,7 @@ import com.example.userservice.service.UserService;
 import com.example.userservice.vo.RequestLogin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,24 +60,24 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
         Authentication auth) throws IOException, ServletException {
 
-//        String userName = ((User) auth.getPrincipal()).getUsername();
-//        UserDTO userDetails = userService.getUserDetailsByEmail(userName);
-//
-//        byte[] secretKeyBytes = Base64.getEncoder().encode(environment.getProperty("token.secret").getBytes());
-//
-//        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
-//
-//        Instant now = Instant.now();
-//
-//        String token = Jwts.builder()
-//            .subject(userDetails.getUserId())
-//            .expiration(Date.from(now.plusMillis(Long.parseLong(environment.getProperty("token.expiration_time")))))
-//            .issuedAt(Date.from(now))
-//            .signWith(secretKey)
-//            .compact();
-//
-//        res.addHeader("token", token);
-//        res.addHeader("userId", userDetails.getUserId());
+        String userName = ((User) auth.getPrincipal()).getUsername();
+        UserDTO userDetails = userService.getUserDetailsByEmail(userName);
+
+        byte[] secretKeyBytes = Base64.getEncoder().encode(environment.getProperty("token.secret").getBytes());
+
+        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+
+        Instant now = Instant.now();
+
+        String token = Jwts.builder()
+            .setSubject(userDetails.getUserId())
+            .setExpiration(Date.from(now.plusMillis(Long.parseLong(environment.getProperty("token.expiration_time")))))
+            .setIssuedAt(Date.from(now))
+            .signWith(secretKey)
+            .compact();
+
+        res.addHeader("token", token);
+        res.addHeader("userId", userDetails.getUserId());
 
     }
 }

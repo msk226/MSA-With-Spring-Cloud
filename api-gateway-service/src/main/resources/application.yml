@@ -20,7 +20,29 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/user-service/login
+            - Method= POST
+          filters:
+            - RemoveRequestHeader= Cookie
+            - RewritePath= /user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method= POST
+          filters:
+            - RemoveRequestHeader= Cookie
+            - RewritePath= /user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/user-service/**
+            - Method= GET
+          filters:
+            - RemoveRequestHeader= Cookie
+            - RewritePath= /user-service/(?<segment>.*), /$\{segment}
 
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
@@ -32,31 +54,3 @@ spring:
           predicates:
             - Path=/order-service/**
 
-        - id: first-service
-          uri: lb://MY-FIRST-SERVICE
-          predicates:
-            - Path=/first-service/**
-          filters:
-            - CustomFilter
-#            - AddRequestHeader=first-request, first-request-header2
-#            - AddResponseHeader=first-response, first-response-header2
-
-        - id: second-service
-          uri: lb://MY-SECOND-SERVICE
-          predicates:
-            - Path=/second-service/**
-          filters:
-            - name: CustomFilter
-            - name: LoggingFilter
-              args:
-                baseMessage: Hi, there
-                preLogger: true
-                postLogger: true
-      default-filters:
-        - name: GlobalFilter
-          args:
-            baseMessage: Spring Cloud Gateway Filter
-            preLogger: true
-            postLogger: true
-#            - AddRequestHeader=second-request, second-request-header2
-#            - AddResponseHeader=second-response, second-response-header2
