@@ -22,6 +22,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+    generate-ddl: true
 
 eureka:
   instance:
@@ -33,4 +34,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 greeting:
-  message: Welcome to the User Service!
+  message: Welcome to the Catalog Service!
