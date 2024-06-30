@@ -44,7 +44,9 @@ dependencies {
     // ModelMapper
     implementation 'org.modelmapper:modelmapper:2.4.4'
     // spring security
-   // implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 }
 
