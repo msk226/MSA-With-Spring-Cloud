@@ -8,9 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
+@Data
 @Table(name = "catalog")
 public class CatalogEntity implements Serializable {
 
