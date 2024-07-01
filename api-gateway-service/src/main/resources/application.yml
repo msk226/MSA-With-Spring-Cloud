@@ -10,6 +10,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+token:
+  secret: user_token12351461asdfawedqegaszdbfzsdfbswef
+  expiration_time: 86400000
 
 spring:
   application:
