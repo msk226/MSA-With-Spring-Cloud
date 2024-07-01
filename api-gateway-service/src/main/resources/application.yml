@@ -13,10 +13,18 @@ eureka:
 token:
   secret: user_token12351461asdfawedqegaszdbfzsdfbswef
   expiration_time: 86400000
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
 spring:
+  config:
+    import:
+      - classpath:/bootstrap.yml
   application:
     name: api-gateway-service
+
   cloud:
     gateway:
       routes:
@@ -34,6 +42,15 @@ spring:
           predicates:
             - Path=/user-service/users
             - Method= POST
+          filters:
+            - RemoveRequestHeader= Cookie
+            - RewritePath= /user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator
+            - Method= POST, GET
           filters:
             - RemoveRequestHeader= Cookie
             - RewritePath= /user-service/(?<segment>.*), /$\{segment}
