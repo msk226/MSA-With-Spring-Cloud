@@ -1,5 +1,6 @@
 package com.example.userservice.service;
 
+import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.dto.UserDTO;
 import com.example.userservice.repository.UserEntity;
 import com.example.userservice.repository.UserRepository;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final OrderServiceClient orderServiceClient;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RestTemplate restTemplate;
     private final Environment environment;
@@ -48,11 +50,12 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("User not found");
         }
         UserDTO userDTO = new ModelMapper().map(user, UserDTO.class);
-        String orderUrl = String.format(environment.getProperty("order_service.url"), userId);
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl,
-            HttpMethod.GET, null,
-            new ParameterizedTypeReference<List<ResponseOrder>>(){});
-        List<ResponseOrder> orders = orderListResponse.getBody();
+//        String orderUrl = String.format(environment.getProperty("order_service.url"), userId);
+//        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl,
+//            HttpMethod.GET, null,
+//            new ParameterizedTypeReference<List<ResponseOrder>>(){});
+//        List<ResponseOrder> orders = orderListResponse.getBody();
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
         userDTO.setOrders(orders);
         return userDTO;
     }
