@@ -39,6 +39,14 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     // ModelMapper
     implementation 'org.modelmapper:modelmapper:2.4.4'
+    // cloud starter
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    // cloud bootstrap
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // bus
+    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 }
 
 dependencyManagement {
