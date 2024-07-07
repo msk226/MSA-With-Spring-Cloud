@@ -6,8 +6,10 @@ import com.example.orderservice.messageQueue.KafkaProducer;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
+import com.example.orderservice.messageQueue.OrderProducer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -27,6 +29,7 @@ public class OrderController {
     private final OrderService orderService;
     private final Environment env;
     private final KafkaProducer kafkaProducer;
+    private final OrderProducer orderProducer;
 
     @GetMapping("/health_check")
     public String status() {
@@ -35,12 +38,17 @@ public class OrderController {
     }
 
     @PostMapping("/{userId}/orders")
-    public ResponseOrder createOrder(@PathVariable String userId, @RequestBody RequestOrder req){
+    public ResponseEntity<ResponseOrder> createOrder(@PathVariable String userId, @RequestBody RequestOrder req){
         OrderDTO orderDTO = new ModelMapper().map(req, OrderDTO.class);
         orderDTO.setUserId(userId);
-        OrderDTO order = orderService.createOrder(orderDTO);
-        kafkaProducer.send("example-catalog-topic", order);
-        return new ModelMapper().map(order, ResponseOrder.class);
+        orderDTO.setOrderId(UUID.randomUUID().toString());
+        orderDTO.setTotalPrice(orderDTO.getQty() * orderDTO.getUnitPrice());
+        //OrderDTO order = orderService.createOrder(orderDTO);
+        ResponseOrder responseOrder = new ModelMapper().map(orderDTO, ResponseOrder.class);
+
+        kafkaProducer.send("example-catalog-topic", orderDTO);
+        orderProducer.send("orders", orderDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }
 
     @GetMapping("/{userId}/orders")
