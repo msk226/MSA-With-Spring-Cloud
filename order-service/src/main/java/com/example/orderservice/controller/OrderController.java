@@ -2,6 +2,7 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderDTO;
 import com.example.orderservice.jpa.OrderEntity;
+import com.example.orderservice.messageQueue.KafkaProducer;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
     private final OrderService orderService;
     private final Environment env;
+    private final KafkaProducer kafkaProducer;
 
     @GetMapping("/health_check")
     public String status() {
@@ -37,6 +39,7 @@ public class OrderController {
         OrderDTO orderDTO = new ModelMapper().map(req, OrderDTO.class);
         orderDTO.setUserId(userId);
         OrderDTO order = orderService.createOrder(orderDTO);
+        kafkaProducer.send("example-catalog-topic", order);
         return new ModelMapper().map(order, ResponseOrder.class);
     }
 
