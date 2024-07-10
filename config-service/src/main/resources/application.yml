@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: config-service
-  profiles:
-    active: native
   rabbitmq:
     host: 127.0.0.1
     port: 5672
@@ -14,10 +12,11 @@ spring:
   cloud:
     config:
       server:
-        native:
-          search-locations: file:///Users/minseokkim/native-local-repo
-#        git:
-#          uri: file:///Users/minseokkim/git-local-repo
+        git:
+          uri: https://github.com/msk226/Spring-Cloud-Config.git
+          username: <msk226>
+          password: <password>
+        bootstrap: true
 management:
   endpoints:
     web:
